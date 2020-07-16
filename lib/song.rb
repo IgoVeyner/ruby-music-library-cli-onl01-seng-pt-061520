@@ -1,14 +1,34 @@
 require 'pry'
 
-class Song < BasicCommands
-  attr_reader :artist, :genre
+class Song
+  attr_accessor :artist, :genre, :name
 
   extend Concerns::Findable
 
+  @@all = []
+
   def initialize(name, artist = nil, genre = nil)
-    super(name)
+    @name = name
     self.artist = artist if artist != nil
     self.genre = genre if genre != nil
+  end
+
+  def self.all
+    @@all
+  end
+
+  def self.destroy_all
+    @@all.clear
+  end
+
+  def save
+    self.class.all << self
+  end
+
+  def self.create(name)
+    x = self.new(name)
+    x.save
+    x
   end
 
   def artist=(artist)
@@ -33,4 +53,5 @@ class Song < BasicCommands
     new_from_filename(filename).save
   end
 end
+
 # binding.pry

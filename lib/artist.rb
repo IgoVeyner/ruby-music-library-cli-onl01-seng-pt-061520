@@ -1,38 +1,42 @@
 require 'pry'
 
-class Artist < BasicCommands
-  attr_accessor :songs
+class Artist 
+  attr_accessor :songs, :name
 
   extend Concerns::Findable
 
-  @@all_artist_names = []
+  @@all = []
 
   def initialize(name)
-    super(name)
+    @name = name
     @songs = []
   end
 
+  def self.all
+    @@all
+  end
+  
+  def self.destroy_all
+    @@all.clear 
+  end
+
+  def save
+    self.class.all << self
+  end
+
+  def self.create(name)
+    x = self.new(name)
+    x.save
+    x
+  end
+
   def add_song(song)
-    song.artist = self if song.artist == nil
-    songs << song if !songs.include?(song)
+    song.artist = self unless song.artist
+    songs << song unless self.songs.include?(song)
   end
 
   def genres
     songs.map {|song| song.genre}.uniq
-  end
-
-  def self.all_artist_names
-    @@all_artist_names
-  end
-
-  def self.destroy_all
-    super
-    @@all_artist_names.clear
-  end
-
-  def save
-    super
-    @@all_artist_names << @name
   end
 end
 

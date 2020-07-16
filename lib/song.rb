@@ -5,8 +5,6 @@ class Song < BasicCommands
 
   extend Concerns::Findable
 
-  @@all = []
-
   def initialize(name, artist = nil, genre = nil)
     super(name)
     self.artist = artist if artist != nil

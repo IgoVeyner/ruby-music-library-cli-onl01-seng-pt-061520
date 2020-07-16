@@ -4,7 +4,6 @@ class Genre < BasicCommands
   extend Concerns::Findable
 
   @@all_genre_names = []
-  @@all = []
 
   def initialize(name)
     super(name)

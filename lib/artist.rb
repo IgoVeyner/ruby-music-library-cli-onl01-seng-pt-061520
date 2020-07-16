@@ -6,7 +6,6 @@ class Artist < BasicCommands
   extend Concerns::Findable
 
   @@all_artist_names = []
-  @@all = []
 
   def initialize(name)
     super(name)

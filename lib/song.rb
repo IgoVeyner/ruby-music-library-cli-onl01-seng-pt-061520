@@ -1,34 +1,20 @@
-require 'pry'
-
 class Song
-  attr_accessor :artist, :genre, :name
-
+  
   extend Concerns::Findable
-
-  @@all = []
+  extend Concerns::Persistable::ClassMethods
+  include Concerns::Persistable::InstanceMethods
+  
+  attr_accessor :name
+  attr_reader :artist, :genre
 
   def initialize(name, artist = nil, genre = nil)
     @name = name
-    self.artist = artist if artist != nil
-    self.genre = genre if genre != nil
+    self.artist = artist if artist 
+    self.genre = genre if genre 
   end
 
   def self.all
     @@all
-  end
-
-  def self.destroy_all
-    @@all.clear
-  end
-
-  def save
-    self.class.all << self
-  end
-
-  def self.create(name)
-    x = self.new(name)
-    x.save
-    x
   end
 
   def artist=(artist)
@@ -38,20 +24,20 @@ class Song
 
   def genre=(genre)
     @genre = genre
-    genre.songs << self if !genre.songs.include?(self)
+    genre.songs << self unless genre.songs.include?(self)
   end
 
   def self.new_from_filename(filename)
     parsed = filename.split(" - ")
-    song = Song.find_or_create_by_name(parsed[1])
-    song.artist = Artist.find_or_create_by_name(parsed[0])
-    song.genre = Genre.find_or_create_by_name(parsed[2].gsub(".mp3", ""))
-    song
+    artist_name, song_name, genre_name = parsed[0], parsed[1], parsed[2].gsub(".mp3", "")
+
+    artist = Artist.find_or_create_by_name(artist_name)
+    genre = Genre.find_or_create_by_name(genre_name)
+
+    new(song_name, artist, genre)
   end
 
   def self.create_from_filename(filename)
     new_from_filename(filename).save
   end
 end
-
-# binding.pry

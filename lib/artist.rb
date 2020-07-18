@@ -1,11 +1,10 @@
-require 'pry'
-
 class Artist 
-  attr_accessor :songs, :name
-
   extend Concerns::Findable
-
-  @@all = []
+  extend Concerns::Persistable::ClassMethods
+  include Concerns::Persistable::InstanceMethods
+  
+  attr_accessor :name
+  attr_reader :songs
 
   def initialize(name)
     @name = name
@@ -15,29 +14,13 @@ class Artist
   def self.all
     @@all
   end
-  
-  def self.destroy_all
-    @@all.clear 
-  end
-
-  def save
-    self.class.all << self
-  end
-
-  def self.create(name)
-    x = self.new(name)
-    x.save
-    x
-  end
 
   def add_song(song)
     song.artist = self unless song.artist
-    songs << song unless self.songs.include?(song)
+    songs << song unless songs.include?(song)
   end
 
   def genres
     songs.map {|song| song.genre}.uniq
   end
 end
-
-# binding.pry

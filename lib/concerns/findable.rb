@@ -1,9 +1,9 @@
 module Concerns::Findable
   def find_by_name(name)
-    all.find {|klass| klass.name == name}
+    self.all.find {|klass| klass.name == name}
   end
 
   def find_or_create_by_name(name)
-    find_by_name(name) ? find_by_name(name) : create(name)  
+    self.find_by_name(name) || create(name)  
   end
 end

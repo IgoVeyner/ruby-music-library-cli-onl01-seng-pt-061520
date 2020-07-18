@@ -1,7 +1,5 @@
-require 'pry'
-
 class MusicLibraryController
-  attr_accessor :path
+  attr_reader :path
 
   def initialize(path = './db/mp3s')
     @path = path
@@ -45,40 +43,40 @@ class MusicLibraryController
   end
 
   def list_songs
-    Song.all.uniq.sort{|a,b|a.name <=> b.name}.each.with_index(1) do |s,i| 
+    Song.all.sort{|a,b|a.name <=> b.name}.each.with_index(1) do |s,i| 
       puts "#{i}. #{s.artist.name} - #{s.name} - #{s.genre.name}"
     end
   end
   
   def list_artists
-    Artist.all.uniq.sort{|a,b| a.name <=> b.name}.each.with_index(1) do |a,i|
+    Artist.all.sort{|a,b| a.name <=> b.name}.each.with_index(1) do |a,i|
       puts "#{i}. #{a.name}"
     end
   end
   
   def list_genres
-    Genre.all.uniq.sort{|a,b| a.name <=> b.name}.each.with_index(1) do |g,i|
+    Genre.all.sort{|a,b| a.name <=> b.name}.each.with_index(1) do |g,i|
       puts "#{i}. #{g.name}"
     end
   end
   
   def list_songs_by_artist
     puts "Please enter the name of an artist:"
-    artist = gets.chomp
-    if Artist.find_by_name(artist)
-      artist_genre_hash = {} 
-      Artist.find_by_name(artist).songs.map {|song| artist_genre_hash[song.name] = song.genre.name } # Fill hash with artist name & genre
-      artist_genre_hash.sort.each_with_index{|(k,v),i| puts "#{i+1}. #{k} - #{v}"}
+    input = gets.chomp
+    if artist = Artist.find_by_name(input)
+      artist.songs.sort{ |a, b| a.name <=> b.name }.each.with_index(1) do |s, i|
+        puts "#{i}. #{s.name} - #{s.genre.name}"
+      end
     end
   end
   
   def list_songs_by_genre
     puts "Please enter the name of a genre:"
-    genre = gets.chomp
-    if Genre.find_by_name(genre)
-      artist_song_hash = {}
-      Genre.find_by_name(genre).songs.map{|song| artist_song_hash[song.artist.name] = song.name} # fills hash
-      artist_song_hash.sort_by(&:last).each_with_index{|(k,v),i| puts "#{i+1}. #{k} - #{v}"}
+    input = gets.chomp
+    if genre = Genre.find_by_name(input)
+      genre.songs.sort{ |a, b| a.name <=> b.name }.each.with_index(1) do |s, i|
+        puts "#{i}. #{s.artist.name} - #{s.name}"
+      end
     end
   end
   
@@ -86,7 +84,7 @@ class MusicLibraryController
     puts "Which song number would you like to play?"
     input = gets.chomp
     
-    songs = Song.all.uniq.sort{|a,b| a.name <=> b.name}
+    songs = Song.all.sort{|a,b| a.name <=> b.name}
     index = input_to_index(input)
     
     if index >= 0 && index < songs.length
@@ -98,5 +96,3 @@ class MusicLibraryController
     input.to_i - 1
   end
 end
-
-# binding.pry
